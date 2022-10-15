@@ -7,6 +7,13 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
   height: 667,
   type: Phaser.AUTO,
   parent: 'game',
+  physics: {
+    default: 'arcade',
+    arcade: {
+        gravity: {y: 100}, // y轴重力
+        debug: false
+    }
+    }, // 开启物理引擎并配置
   scene: [GameScene],
   backgroundColor: '#000000',
   render: { pixelArt: false, antialias: true }
