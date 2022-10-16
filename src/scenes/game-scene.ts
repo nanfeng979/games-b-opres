@@ -31,12 +31,19 @@ export class GameScene extends Phaser.Scene {
         stones.create(60 + stone_slip * 2, 100, "stone").setScale(0.5)
         stones.create(60 + stone_slip * 3, 100, "stone").setScale(0.5)
 
+        // stones.children.iterate(function (child, i) {
+        //   if(i == 2){
+        //     child.y += 100
+        //   }
+        // })
+
         // 添加宝石
-        this.add.sprite(50, 100, "star").setScale(0.5)
+        // this.add.sprite(50, 100, "star").setScale(0.5)
 
         let player = this.physics.add.sprite(375 / 2, 100, "player").setScale(0.6) // 人物
         player.setBounce(0.2); // 弹力系数
         player.setCollideWorldBounds(true); // 与世界边框碰撞就停止
+        this.physics.add.collider(player, lawns);
     }
 
 }
