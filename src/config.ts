@@ -11,7 +11,7 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
     default: 'arcade',
     arcade: {
         gravity: {y: 100}, // y轴重力
-        debug: false
+        debug: true
     }
     }, // 开启物理引擎并配置
   scene: [GameScene],

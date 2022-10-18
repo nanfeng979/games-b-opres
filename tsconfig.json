@@ -13,9 +13,9 @@
     "noEmit": true,
     // "noUnusedLocals": true,
     "noUnusedLocals": false,
-    "noUnusedParameters": true,
+    "noUnusedParameters": false,
     "noImplicitReturns": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
   },
   "include": ["src"]
 }
