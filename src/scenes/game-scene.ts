@@ -3,6 +3,8 @@ export class GameScene extends Phaser.Scene {
 	private player:any
 	private star!:Phaser.GameObjects.Sprite
     private jindutiao:any
+    private scoreObject!:Phaser.GameObjects.Text
+    private score:number = 0
 
     constructor() {
       super({
@@ -91,6 +93,9 @@ export class GameScene extends Phaser.Scene {
             _this.jindutiao.setScale(0.5 * jindutiao_scale_x, 0.5)
         }, 1000)
 
+        // 分数
+        this.scoreObject = this.add.text(0, 0, "" + this.score , { fontSize: "20px"})
+
 
         // 事件
         this.input.on("pointerdown", (pointer:any) => {
@@ -121,6 +126,8 @@ export class GameScene extends Phaser.Scene {
 
         // 角色与宝石的重叠
         function player_peng_star(player:any, star:any) {
+            _this.score += 1
+            _this.scoreObject.setText("" + _this.score)
             _this.star.destroy()
             _this.star = random_stat()
             _this.physics.add.overlap(player, _this.star, player_peng_star);
