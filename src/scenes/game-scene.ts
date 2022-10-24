@@ -5,10 +5,11 @@ export class GameScene extends Phaser.Scene {
     private jindutiao:any
     private scoreObject!:Phaser.GameObjects.Text
     private score:number = 0
-    private play!:Phaser.GameObjects.Image
-    private gamename!:Phaser.GameObjects.Image
-    private icon_scale:Boolean = false
-    private scene_number:number = 0
+    private play!:Phaser.GameObjects.Image // 开始键--第一场景
+    private gamename!:Phaser.GameObjects.Image // gamename图标--第一场景
+    private icon_scale:Boolean = false // 控制第一场景的动画
+    private scene_number:number = 0 // 控制场景
+    private tips!:Phaser.GameObjects.Image // tips提示--第二场景
 
     constructor() {
       super({
@@ -25,8 +26,9 @@ export class GameScene extends Phaser.Scene {
         this.load.image("rope", images_url + "rope.png") // 绳子
         this.load.image("jindutiao", images_url + "energybar.png") // 进度条
         this.load.image("jindutiaokuang", images_url + "energycontainer.png") // 进度条框
-        this.load.image("play", images_url + "play.png") // 开始键
-        this.load.image("gamename", images_url + "gamename.png") // gamename图标
+        this.load.image("play", images_url + "play.png") // 开始键--第一场景
+        this.load.image("gamename", images_url + "gamename.png") // gamename图标--第一场景
+        this.load.image("tips", images_url + "tips.png") // tips提示--第二场景
     }
 
     create(): void {
@@ -119,9 +121,13 @@ export class GameScene extends Phaser.Scene {
                 case 0:
                      _this.play.destroy()
                      _this.gamename.destroy()
+                    _this.tips = _this.add.image(375 /2, 667 / 2 - 200, "tips").setScale(0.5)
+                    _this.scene_number = 1
+                break;
+                case 1:
+                    _this.tips.destroy()
                     _this.scene_number = 2
                 break;
-                case 1: break;
                 case 2:
                     let speed = 1
                     let x = pointer.x - this.player.x
