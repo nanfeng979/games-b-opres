@@ -1,7 +1,7 @@
 export class GameScene extends Phaser.Scene {
     private rope!: Phaser.Physics.Arcade.StaticGroup;
 	private player:any
-	private star:any
+	private star!:Phaser.GameObjects.Sprite;
 
     constructor() {
       super({
@@ -42,14 +42,16 @@ export class GameScene extends Phaser.Scene {
         //   }
         // })
 
-        // 添加宝石
-        random_stat()
-
 		// 人物
-        this.player = this.physics.add.sprite(375 / 2, 500, "player").setScale(0.5)
+        this.player = this.physics.add.sprite(375 / 2, 500, "player").setScale(0.5).setAccelerationY(100)
         this.player.setBounce(0.3); // 弹力系数
         this.player.setCollideWorldBounds(true); // 与世界边框碰撞就停止
         this.physics.add.collider(this.player, lawns, pengzhuang);
+
+        // 添加宝石
+        this.star = random_stat()
+        this.physics.add.overlap(this.player, this.star, player_peng_star);
+        
 
         // rope = this.add.image(50, 50, "rope").setAngle(90)
         // this.rope = this.add.group({
@@ -97,7 +99,14 @@ export class GameScene extends Phaser.Scene {
             let random_x = Math.floor(Math.random() * (375 - 50) + 50)
             let random_y = Math.floor(Math.random() * 300 + 100)
             let random_type = Math.floor(Math.random() * 3)
-            _this.star = _this.add.sprite(random_x, random_y, "star", random_type).setScale(0.5)
+            return _this.physics.add.sprite(random_x, random_y, "star", random_type).setScale(0.5)
+        }
+
+        // 角色与宝石的重叠
+        function player_peng_star(player:any, star:any) {
+            _this.star.destroy()
+            _this.star = random_stat()
+            _this.physics.add.overlap(player, _this.star, player_peng_star);
         }
         
     }
