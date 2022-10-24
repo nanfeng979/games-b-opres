@@ -1,6 +1,6 @@
 export class GameScene extends Phaser.Scene {
     private rope!: Phaser.Physics.Arcade.StaticGroup
-	private player:any
+	private player!:Phaser.Physics.Arcade.Image
 	private star!:Phaser.GameObjects.Sprite
     private star_scale:Boolean = false;
     private jindutiao:any
@@ -11,6 +11,8 @@ export class GameScene extends Phaser.Scene {
     private icon_scale:Boolean = false // 控制第一场景的动画
     private scene_number:number = 0 // 控制场景
     private tips!:Phaser.GameObjects.Image // tips提示--第二场景
+    private yes!:Phaser.GameObjects.Image // yes--第四场景
+    private no!:Phaser.GameObjects.Image // no--第四场景
 
     constructor() {
       super({
@@ -30,6 +32,9 @@ export class GameScene extends Phaser.Scene {
         this.load.image("play", images_url + "play.png") // 开始键--第一场景
         this.load.image("gamename", images_url + "gamename.png") // gamename图标--第一场景
         this.load.image("tips", images_url + "tips.png") // tips提示--第二场景
+        this.load.image("tryagain", images_url + "tryagain.png") // tryagain--第四场景
+        this.load.image("yes", images_url + "yes.png") // yes--第四场景
+        this.load.image("no", images_url + "no.png") // no--第四场景
     }
 
     create(): void {
@@ -114,6 +119,8 @@ export class GameScene extends Phaser.Scene {
                 jindutiao_scale_x -= (1 / 5)
                 if(jindutiao_scale_x <= 0) {
                     clearInterval(jindutiao_timer)
+                    _this.scene_number = 4
+                    four_scene_create()
                     return
                 }
                 _this.jindutiao.setScale(0.5 * jindutiao_scale_x, 0.5)
@@ -137,11 +144,25 @@ export class GameScene extends Phaser.Scene {
             _this.icon_scale = !_this.icon_scale
         }, 150)
 
+        function four_scene_create() {
+            // tryagain
+            _this.add.image(375 / 2, 667 / 2 - 200, "tryagain").setScale(0.5)
+
+            // yes
+            _this.yes = _this.add.image(375 / 2 - 80, 667 / 2 + 100, "yes").setScale(0.5)
+
+            // no
+            _this.no = _this.add.image(375 / 2 + 80, 667 / 2 + 100, "no").setScale(0.5)
+
+            // score
+            _this.add.text(375 / 2 - 130, 667 / 2, "Your Score: " + _this.score , { fontSize: "36px"})
+        }
+        
+
         // 事件
         this.input.on("pointerdown", (pointer:any) => {
             switch(this.scene_number) {
                 case 0:
-                    console.log(1)
                      _this.play.destroy()
                      _this.gamename.destroy()
                     _this.tips = _this.add.image(375 /2, 667 / 2 - 200, "tips").setScale(0.5)
@@ -150,7 +171,6 @@ export class GameScene extends Phaser.Scene {
                     _this.scene_number = 1
                 break;
                 case 1:
-                    console.log(2)
                     _this.tips.destroy()
                     jindutiao_timer_fun()
                     _this.scene_number = 2
@@ -167,7 +187,6 @@ export class GameScene extends Phaser.Scene {
                     this.player.setVelocityY(y * speed)
                     break
             }
-			
 		})
 
 		// 自定义函数
