@@ -2,6 +2,7 @@ export class GameScene extends Phaser.Scene {
     private rope!: Phaser.Physics.Arcade.StaticGroup
 	private player:any
 	private star!:Phaser.GameObjects.Sprite
+    private star_scale:Boolean = false;
     private jindutiao:any
     private scoreObject!:Phaser.GameObjects.Text
     private score:number = 0
@@ -64,6 +65,19 @@ export class GameScene extends Phaser.Scene {
         // 添加宝石
         this.star = random_stat()
         this.physics.add.overlap(this.player, this.star, player_peng_star);
+
+        // 控制宝石一直缩小扩大
+        setInterval(function() {
+            if(_this.star_scale) {
+                _this.star.setScale(0.5, 0.5)
+                _this.star_scale = !_this.star_scale
+            } else {
+                let star_scale_xy = 0.53
+                _this.star.setScale(star_scale_xy, star_scale_xy)
+                _this.star_scale = !_this.star_scale
+            }
+        }, 250)
+        
         
 
         // rope = this.add.image(50, 50, "rope").setAngle(90)
@@ -88,21 +102,29 @@ export class GameScene extends Phaser.Scene {
         //   })
         
         // 进度条
-        this.add.image(200, 600, "jindutiaokuang").setScale(0.5)
-        this.jindutiao = this.add.image(99, 591, "jindutiao").setScale(0.5, 0.5).setOrigin(0)
+        function jindutiao_create_fun() {
+            _this.add.image(200, 600, "jindutiaokuang").setScale(0.5)
+            _this.jindutiao = _this.add.image(99, 591, "jindutiao").setScale(0.5, 0.5).setOrigin(0)
+            
+        }
         // 进度条定时器
-        let jindutiao_scale_x = 1
-        let jindutiao_timer = setInterval(function () {
-            jindutiao_scale_x -= (1 / 5)
-            if(jindutiao_scale_x <= 0) {
-                clearInterval(jindutiao_timer)
-                return
-            }
-            _this.jindutiao.setScale(0.5 * jindutiao_scale_x, 0.5)
-        }, 1000)
+        function jindutiao_timer_fun() {
+            let jindutiao_scale_x = 1
+            let jindutiao_timer = setInterval(function () {
+                jindutiao_scale_x -= (1 / 5)
+                if(jindutiao_scale_x <= 0) {
+                    clearInterval(jindutiao_timer)
+                    return
+                }
+                _this.jindutiao.setScale(0.5 * jindutiao_scale_x, 0.5)
+            }, 1000)
+        }
+        
 
         // 分数
-        this.scoreObject = this.add.text(0, 0, "score: " + this.score , { fontSize: "24px"})
+        function score_fun() {
+            _this.scoreObject = _this.add.text(0, 0, "score: " + _this.score , { fontSize: "24px"})
+        }
 
         // 开始键
         this.play = this.add.image(375 / 2, 667 / 2, "play").setScale(0.5)
@@ -119,13 +141,18 @@ export class GameScene extends Phaser.Scene {
         this.input.on("pointerdown", (pointer:any) => {
             switch(this.scene_number) {
                 case 0:
+                    console.log(1)
                      _this.play.destroy()
                      _this.gamename.destroy()
                     _this.tips = _this.add.image(375 /2, 667 / 2 - 200, "tips").setScale(0.5)
+                    jindutiao_create_fun()
+                    score_fun()
                     _this.scene_number = 1
                 break;
                 case 1:
+                    console.log(2)
                     _this.tips.destroy()
+                    jindutiao_timer_fun()
                     _this.scene_number = 2
                 break;
                 case 2:
@@ -154,7 +181,7 @@ export class GameScene extends Phaser.Scene {
             let random_x = Math.floor(Math.random() * (375 - 50) + 50)
             let random_y = Math.floor(Math.random() * 300 + 100)
             let random_type = Math.floor(Math.random() * 3)
-            return _this.physics.add.sprite(random_x, random_y, "star", random_type).setScale(0.5)
+            return _this.physics.add.sprite(random_x, random_y, "star", random_type).setScale(0.5, 0.5)
         }
 
         // 角色与宝石的重叠
@@ -171,7 +198,7 @@ export class GameScene extends Phaser.Scene {
     update(time: number, delta: number): void {
         // rope.x = player.x;
         // rope.y = player.y;
-        
+
         // 控制gamename图标和play开始键的抽动
         if(this.scene_number == 0) {
             if(this.icon_scale == false) {
@@ -183,7 +210,6 @@ export class GameScene extends Phaser.Scene {
                 this.play.setScale(0.5, 0.5)
                 this.gamename.setScale(0.5, 0.5)
             }
-            
         }
     }
 
