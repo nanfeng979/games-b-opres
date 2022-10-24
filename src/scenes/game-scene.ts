@@ -5,6 +5,10 @@ export class GameScene extends Phaser.Scene {
     private jindutiao:any
     private scoreObject!:Phaser.GameObjects.Text
     private score:number = 0
+    private play!:Phaser.GameObjects.Image
+    private gamename!:Phaser.GameObjects.Image
+    private icon_scale:Boolean = false
+    private scene_number:number = 0
 
     constructor() {
       super({
@@ -21,6 +25,8 @@ export class GameScene extends Phaser.Scene {
         this.load.image("rope", images_url + "rope.png") // 绳子
         this.load.image("jindutiao", images_url + "energybar.png") // 进度条
         this.load.image("jindutiaokuang", images_url + "energycontainer.png") // 进度条框
+        this.load.image("play", images_url + "play.png") // 开始键
+        this.load.image("gamename", images_url + "gamename.png") // gamename图标
     }
 
     create(): void {
@@ -96,18 +102,39 @@ export class GameScene extends Phaser.Scene {
         // 分数
         this.scoreObject = this.add.text(0, 0, "score: " + this.score , { fontSize: "24px"})
 
+        // 开始键
+        this.play = this.add.image(375 / 2, 667 / 2, "play").setScale(0.5)
+
+        // gamename图标
+        this.gamename = this.add.image(375 /2, 667 / 2 - 200, "gamename").setScale(0.5)
+
+        // 开始键和gamename图标的定时器
+        setInterval(function() {
+            _this.icon_scale = !_this.icon_scale
+        }, 150)
 
         // 事件
         this.input.on("pointerdown", (pointer:any) => {
-			let speed = 1
-			let x = pointer.x - this.player.x
-			let y = pointer.y - this.player.y
-			// if(y < 0 && y > -130) y = -130
-            if(y > 0) y = 150
-            if(y < 0) y = -150
+            switch(this.scene_number) {
+                case 0:
+                     _this.play.destroy()
+                     _this.gamename.destroy()
+                    _this.scene_number = 2
+                break;
+                case 1: break;
+                case 2:
+                    let speed = 1
+                    let x = pointer.x - this.player.x
+                    let y = pointer.y - this.player.y
+                    // if(y < 0 && y > -130) y = -130
+                    if(y > 0) y = 150
+                    if(y < 0) y = -150
 
-			this.player.setVelocityX(x * speed)
-			this.player.setVelocityY(y * speed)
+                    this.player.setVelocityX(x * speed)
+                    this.player.setVelocityY(y * speed)
+                    break
+            }
+			
 		})
 
 		// 自定义函数
@@ -139,6 +166,19 @@ export class GameScene extends Phaser.Scene {
         // rope.x = player.x;
         // rope.y = player.y;
         
+        // 控制gamename图标和play开始键的抽动
+        if(this.scene_number == 0) {
+            if(this.icon_scale == false) {
+                let scale_x = 0.51
+                let scale_y = 0.51
+                this.play.setScale(0.5, scale_y)
+                this.gamename.setScale(scale_x, scale_y)
+            } else {
+                this.play.setScale(0.5, 0.5)
+                this.gamename.setScale(0.5, 0.5)
+            }
+            
+        }
     }
 
 }
