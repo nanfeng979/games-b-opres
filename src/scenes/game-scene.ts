@@ -1,7 +1,7 @@
-let player:any = {};
-
 export class GameScene extends Phaser.Scene {
     private rope!: Phaser.Physics.Arcade.StaticGroup;
+	private player:any
+	private star:any
 
     constructor() {
       super({
@@ -43,13 +43,13 @@ export class GameScene extends Phaser.Scene {
         // })
 
         // 添加宝石
-        // this.add.sprite(50, 100, "star").setScale(0.5)
+        random_stat()
 
 		// 人物
-        player = this.physics.add.sprite(375 / 2, 500, "player").setScale(0.5)
-        player.setBounce(0.3); // 弹力系数
-        player.setCollideWorldBounds(true); // 与世界边框碰撞就停止
-        this.physics.add.collider(player, lawns, pengzhuang);
+        this.player = this.physics.add.sprite(375 / 2, 500, "player").setScale(0.5)
+        this.player.setBounce(0.3); // 弹力系数
+        this.player.setCollideWorldBounds(true); // 与世界边框碰撞就停止
+        this.physics.add.collider(this.player, lawns, pengzhuang);
 
         // rope = this.add.image(50, 50, "rope").setAngle(90)
         // this.rope = this.add.group({
@@ -76,18 +76,29 @@ export class GameScene extends Phaser.Scene {
         // 事件
         this.input.on("pointerdown", (pointer:any) => {
 			let speed = 1
-			let x = pointer.x - player.x
-			let y = pointer.y - player.y
-			if(y > -130) y = -130
+			let x = pointer.x - this.player.x
+			let y = pointer.y - this.player.y
+			// if(y < 0 && y > -130) y = -130
+            if(y > 0) y = 150
+            if(y < 0) y = -150
 
-			player.setVelocityX(x * speed)
-			player.setVelocityY(y * speed)
+			this.player.setVelocityX(x * speed)
+			this.player.setVelocityY(y * speed)
 		})
 
 		// 自定义函数
+        // 角色碰撞后x轴方向的移动变为0
 		function pengzhuang() {
-			player.setVelocityX(0)
+			_this.player.setVelocityX(0)
 		}
+
+        // 随机地点生成星星
+        function random_stat() {
+            let random_x = Math.floor(Math.random() * (375 - 50) + 50)
+            let random_y = Math.floor(Math.random() * 300 + 100)
+            let random_type = Math.floor(Math.random() * 3)
+            _this.star = _this.add.sprite(random_x, random_y, "star", random_type).setScale(0.5)
+        }
         
     }
     
