@@ -1,7 +1,8 @@
 export class GameScene extends Phaser.Scene {
-    private rope!: Phaser.Physics.Arcade.StaticGroup;
+    private rope!: Phaser.Physics.Arcade.StaticGroup
 	private player:any
-	private star!:Phaser.GameObjects.Sprite;
+	private star!:Phaser.GameObjects.Sprite
+    private jindutiao:any
 
     constructor() {
       super({
@@ -16,6 +17,8 @@ export class GameScene extends Phaser.Scene {
         this.load.image("stone", images_url + "stone.png") // 石块
         this.load.spritesheet("star", images_url + "star.png", {frameWidth: 100, frameHeight: 100}) // 宝石
         this.load.image("rope", images_url + "rope.png") // 绳子
+        this.load.image("jindutiao", images_url + "energybar.png") // 进度条
+        this.load.image("jindutiaokuang", images_url + "energycontainer.png") // 进度条框
     }
 
     create(): void {
@@ -74,6 +77,20 @@ export class GameScene extends Phaser.Scene {
         //     },
         //   })
         
+        // 进度条
+        this.add.image(200, 600, "jindutiaokuang").setScale(0.5)
+        this.jindutiao = this.add.image(99, 591, "jindutiao").setScale(0.5, 0.5).setOrigin(0)
+        // 进度条定时器
+        let jindutiao_scale_x = 1
+        let jindutiao_timer = setInterval(function () {
+            jindutiao_scale_x -= (1 / 5)
+            if(jindutiao_scale_x <= 0) {
+                clearInterval(jindutiao_timer)
+                return
+            }
+            _this.jindutiao.setScale(0.5 * jindutiao_scale_x, 0.5)
+        }, 1000)
+
 
         // 事件
         this.input.on("pointerdown", (pointer:any) => {
