@@ -94,7 +94,7 @@ export class GameScene extends Phaser.Scene {
         }, 1000)
 
         // 分数
-        this.scoreObject = this.add.text(0, 0, "" + this.score , { fontSize: "20px"})
+        this.scoreObject = this.add.text(0, 0, "score: " + this.score , { fontSize: "24px"})
 
 
         // 事件
@@ -127,7 +127,7 @@ export class GameScene extends Phaser.Scene {
         // 角色与宝石的重叠
         function player_peng_star(player:any, star:any) {
             _this.score += 1
-            _this.scoreObject.setText("" + _this.score)
+            _this.scoreObject.setText("score: " + _this.score)
             _this.star.destroy()
             _this.star = random_stat()
             _this.physics.add.overlap(player, _this.star, player_peng_star);
