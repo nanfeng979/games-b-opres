@@ -1,5 +1,6 @@
 export class GameScene extends Phaser.Scene {
-    private rope!: Phaser.Physics.Arcade.StaticGroup
+    // private rope!: Phaser.Physics.Arcade.StaticGroup
+    private rope!: Phaser.Physics.Arcade.StaticGroup;
 	private player!:Phaser.Physics.Arcade.Image
 	private star!:Phaser.GameObjects.Sprite
     private star_scale:Boolean = false;
@@ -13,6 +14,10 @@ export class GameScene extends Phaser.Scene {
     private tips!:Phaser.GameObjects.Image // tips提示--第二场景
     private yes!:Phaser.GameObjects.Image // yes--第四场景
     private no!:Phaser.GameObjects.Image // no--第四场景
+    private mousedown = false
+    private mouseup = false
+    private stone_xy:any
+
 
     constructor() {
       super({
@@ -49,12 +54,14 @@ export class GameScene extends Phaser.Scene {
 
         // 添加石块组
         let stones = this.physics.add.staticGroup();
-        let stone_slip = 80
-        stones.create(60, 100, "stone").setScale(0.5)
-        stones.create(60 + stone_slip * 1, 100, "stone").setScale(0.5)
-        stones.create(60 + stone_slip * 2, 100, "stone").setScale(0.5)
-        stones.create(60 + stone_slip * 3, 100, "stone").setScale(0.5)
-
+        let stone:any = []
+        stones.create(375 / 4 / 2, 100, "stone").setScale(0.5)
+        stones.create(375 / 4 / 2 + 375 / 4 * 1, 100, "stone").setScale(0.5)
+        stones.create(375 / 4 / 2 + 375 / 4 * 2, 100, "stone").setScale(0.5)
+        stones.create(375 / 4 / 2 + 375 / 4 * 3, 100, "stone").setScale(0.5)
+        stones.children.each((child, i) => {
+            stone[i] = child
+        })
         // stones.children.iterate(function (child, i) {
         //   if(i == 2){
         //     child.y += 100
@@ -83,6 +90,46 @@ export class GameScene extends Phaser.Scene {
             }
         }, 250)
         
+        // this.rope = this.physics.add.staticGroup({
+        //     key: "rope",
+        //     // frame: ["blue1", "red1", "green1", "yellow1", "silver1", "purple1"],
+        //     // frame: ["blue1"],
+        //     frameQuantity: 10, // 控制对象的重复数量
+        //     gridAlign: {
+        //       width: 10, // 不要
+        //       height: 6, // 不要
+        //       cellWidth: 32, // 重复的对象的原点之间的宽度距离
+        //       cellHeight: 32, // 重复的对象的原点之间的高度距离
+        //       x: 112,//why? // 第一个对象的x轴
+        //       y: 100, // 第一个对象的y轴
+        //     },
+        //   });
+        //   this.physics.add.collider(
+        //     this.player,
+        //     this.rope,
+        //     player_peng_rope,
+        //     undefined,
+        //     this
+        //   );
+          
+        // this.rope.children.each((child) => {
+        //     child.destroy()
+        // })
+
+        //   this.rope = this.physics.add.staticGroup({
+        //     key: "rope",
+        //     // frame: ["blue1", "red1", "green1", "yellow1", "silver1", "purple1"],
+        //     // frame: ["blue1"],
+        //     frameQuantity: 10, // 控制对象的重复数量
+        //     gridAlign: {
+        //       width: 10, // 不要
+        //       height: 6, // 不要
+        //       cellWidth: 64, // 重复的对象的原点之间的宽度距离
+        //       cellHeight: 32, // 重复的对象的原点之间的高度距离
+        //       x: 112,//why? // 第一个对象的x轴
+        //       y: 100, // 第一个对象的y轴
+        //     },
+        //   });
         
 
         // rope = this.add.image(50, 50, "rope").setAngle(90)
@@ -105,6 +152,12 @@ export class GameScene extends Phaser.Scene {
         //       y: 100,
         //     },
         //   })
+
+        function player_peng_rope(ball:Phaser.Types.Physics.Arcade.GameObjectWithDynamicBody, 
+            rope:Phaser.Types.Physics.Arcade.GameObjectWithDynamicBody) {
+            // rope.disableBody(true, true);
+            rope.destroy()
+        }
         
         // 进度条
         function jindutiao_create_fun() {
@@ -116,7 +169,7 @@ export class GameScene extends Phaser.Scene {
         function jindutiao_timer_fun() {
             let jindutiao_scale_x = 1
             let jindutiao_timer = setInterval(function () {
-                jindutiao_scale_x -= (1 / 5)
+                jindutiao_scale_x -= (1 / 50)
                 if(jindutiao_scale_x <= 0) {
                     clearInterval(jindutiao_timer)
                     _this.scene_number = 4
@@ -150,6 +203,10 @@ export class GameScene extends Phaser.Scene {
 
             // yes
             _this.yes = _this.add.image(375 / 2 - 80, 667 / 2 + 100, "yes").setScale(0.5)
+            _this.yes.setInteractive()
+            _this.yes.on("pointerdown", () => {
+                window.location.reload()
+            })
 
             // no
             _this.no = _this.add.image(375 / 2 + 80, 667 / 2 + 100, "no").setScale(0.5)
@@ -176,18 +233,23 @@ export class GameScene extends Phaser.Scene {
                     _this.scene_number = 2
                 break;
                 case 2:
-                    let speed = 1
-                    let x = pointer.x - this.player.x
-                    let y = pointer.y - this.player.y
-                    // if(y < 0 && y > -130) y = -130
-                    if(y > 0) y = 150
-                    if(y < 0) y = -150
-
-                    this.player.setVelocityX(x * speed)
-                    this.player.setVelocityY(y * speed)
+                    this.mousedown = true
+                    if(pointer.x < ((375 / 4) * 1 )) {
+                        this.stone_xy = stone[0]
+                    } else if (pointer.x < ((375 / 4) * 2 )) {
+                        this.stone_xy = stone[1]
+                    } else if (pointer.x < ((375 / 4) * 3 )) {
+                        this.stone_xy = stone[2]
+                    } else {
+                        this.stone_xy = stone[3]
+                    }
                     break
             }
 		})
+
+        this.input.on("pointerup", (pointer:any) => {
+            this.mousedown = false
+        })
 
 		// 自定义函数
         // 角色碰撞后x轴方向的移动变为0
@@ -229,6 +291,34 @@ export class GameScene extends Phaser.Scene {
                 this.play.setScale(0.5, 0.5)
                 this.gamename.setScale(0.5, 0.5)
             }
+        }
+
+        if(this.mousedown == true) {
+            console.log("yeah")
+            let speed = 0.8
+                    
+            let line = new Phaser.Geom.Line(this.stone_xy.x, this.stone_xy.y, this.player.x, this.player.y)
+            let rotat = Math.atan((this.stone_xy.x - this.player.x)/(this.stone_xy.y - this.player.y)) * 180 / Math.PI
+            let rope_len = Math.sqrt((this.stone_xy.x - this.player.x) ** 2 + (this.stone_xy.y - this.player.y) ** 2)
+            let rope_num = Math.floor(rope_len / 32) + 1
+            let rope = this.physics.add.staticGroup({
+                key: 'rope',
+                frameQuantity: rope_num,
+                setRotation: {value: -rotat * Math.PI / 180}
+            }).setOrigin(0,0);
+            Phaser.Actions.PlaceOnLine(rope.getChildren(), line);
+            setTimeout(() => {
+                rope.children.each((child) => {
+                    child.destroy()
+                })
+            });
+
+            
+            this.player.setVelocityX((this.stone_xy.x - this.player.x) * speed)
+            this.player.setVelocityY((this.stone_xy.y - this.player.y) * speed)
+        }
+        if(this.mouseup == true) {
+            console.log("yo")
         }
     }
 
