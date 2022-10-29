@@ -17,6 +17,7 @@ export class GameScene extends Phaser.Scene {
     private mousedown = false
     private mouseup = false
     private stone_xy:any
+    private stone_left_right:any
 
 
     constructor() {
@@ -170,12 +171,16 @@ export class GameScene extends Phaser.Scene {
                     this.mousedown = true
                     if(pointer.x < ((375 / 4) * 1 )) {
                         this.stone_xy = stone[0]
+                        this.stone_left_right = "left"
                     } else if (pointer.x < ((375 / 4) * 2 )) {
                         this.stone_xy = stone[1]
+                        this.stone_left_right = "left"
                     } else if (pointer.x < ((375 / 4) * 3 )) {
                         this.stone_xy = stone[2]
+                        this.stone_left_right = "right"
                     } else {
                         this.stone_xy = stone[3]
+                        this.stone_left_right = "right"
                     }
                     break
             }
@@ -255,8 +260,11 @@ export class GameScene extends Phaser.Scene {
                     child.destroy()
                 })
             });
-            
-            this.player.setVelocityX((this.stone_xy.x - this.player.x) * speed)
+            let x = 0
+            if(this.stone_left_right == "left") x = -(this.stone_xy.y * 0.5)
+            if(this.stone_left_right == "right") x = this.stone_xy.y * 0.5
+
+            this.player.setVelocityX((this.stone_xy.x - this.player.x) * speed + x)
             this.player.setVelocityY((this.stone_xy.y - this.player.y) * speed)
         }
         if(this.mouseup == true) {
