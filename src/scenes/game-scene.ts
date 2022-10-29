@@ -135,8 +135,8 @@ export class GameScene extends Phaser.Scene {
                 case 0:
                     jindutiao_timer_fun()
                     this.scene_number = 2
+                    break
                 case 2:
-                    // jindutiao_timer_fun()
                     this.mousedown = true
                     if(pointer.x < ((375 / 4) * 1 )) {
                         this.stone_xy = stone[0]
@@ -152,16 +152,20 @@ export class GameScene extends Phaser.Scene {
                         this.stone_left_right = "right"
                     }
                     break
+                case 4:
+                    console.log("over")
             }
 		})
 
         this.input.on("pointerup", (pointer:any) => {
-            this.mousedown = false
-            console.log("yoo")
-            if(this.stone_xy) {
-                let random_y = Math.floor(Math.random() * 100 - 50)
-                if(this.stone_xy.y + random_y < 50 || this.stone_xy.y + random_y > 250) return
-                this.stone_xy.y += random_y
+            if(this.scene_number == 2) {
+                this.mousedown = false
+                console.log("yoo")
+                if(this.stone_xy) {
+                    let random_y = Math.floor(Math.random() * 100 - 50)
+                    if(this.stone_xy.y + random_y < 50 || this.stone_xy.y + random_y > 250) return
+                    this.stone_xy.y += random_y
+                }
             }
         })
 
@@ -214,11 +218,8 @@ export class GameScene extends Phaser.Scene {
                     child.destroy()
                 })
             });
-            let x = 0
-            if(this.stone_left_right == "left") x = -(this.stone_xy.y * 0.5)
-            if(this.stone_left_right == "right") x = this.stone_xy.y * 0.5
 
-            this.player.setVelocityX((this.stone_xy.x - this.player.x) * speed + x)
+            this.player.setVelocityX((this.stone_xy.x - this.player.x) * speed)
             this.player.setVelocityY((this.stone_xy.y - this.player.y) * speed)
         }
     }
