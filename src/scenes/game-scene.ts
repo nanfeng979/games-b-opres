@@ -14,6 +14,7 @@ export class GameScene extends Phaser.Scene {
     private mouseup = false
     private stone_xy:any
     private stone_left_right:any
+    private video_ding:any
 
     constructor() {
       super({
@@ -33,10 +34,13 @@ export class GameScene extends Phaser.Scene {
         this.load.image("tryagain", images_url + "tryagain.png") // tryagain--第四场景
         this.load.image("yes", images_url + "yes.png") // yes--第四场景
         this.load.image("no", images_url + "no.png") // no--第四场景
+        this.load.audio("ding", "../src/assets/sounds/grow.ogg") // 吃到宝石的音效
     }
 
     create(): void {
         let _this = this
+        this.video_ding = this.sound.add("ding")
+
         this.add.image(2, 0, "background").setScale(187, 2.7) // 蓝色背景
 
         // 添加草坪组
@@ -185,6 +189,7 @@ export class GameScene extends Phaser.Scene {
 
         // 角色与宝石的重叠
         function player_peng_star(player:any, star:any) {
+            _this.video_ding.play()
             _this.score += 1
             _this.scoreObject.setText("score: " + _this.score)
             _this.star.destroy()
