@@ -1,5 +1,4 @@
 export class GameScene extends Phaser.Scene {
-    // private rope!: Phaser.Physics.Arcade.StaticGroup
     private rope!: Phaser.Physics.Arcade.StaticGroup;
 	private player!:Phaser.Physics.Arcade.Image
 	private star!:Phaser.GameObjects.Sprite
@@ -7,8 +6,6 @@ export class GameScene extends Phaser.Scene {
     private jindutiao:any
     private scoreObject!:Phaser.GameObjects.Text
     private score:number = 0
-    // private play!:Phaser.GameObjects.Image // 开始键--第一场景
-    // private gamename!:Phaser.GameObjects.Image // gamename图标--第一场景
     private scene_number:number = 0 // 控制场景
     private tips!:Phaser.GameObjects.Image // tips提示--第二场景
     private yes!:Phaser.GameObjects.Image // yes--第四场景
@@ -17,7 +14,6 @@ export class GameScene extends Phaser.Scene {
     private mouseup = false
     private stone_xy:any
     private stone_left_right:any
-
 
     constructor() {
       super({
@@ -34,7 +30,6 @@ export class GameScene extends Phaser.Scene {
         this.load.image("rope", images_url + "rope.png") // 绳子
         this.load.image("jindutiao", images_url + "energybar.png") // 进度条
         this.load.image("jindutiaokuang", images_url + "energycontainer.png") // 进度条框
-
         this.load.image("tryagain", images_url + "tryagain.png") // tryagain--第四场景
         this.load.image("yes", images_url + "yes.png") // yes--第四场景
         this.load.image("no", images_url + "no.png") // no--第四场景
@@ -83,8 +78,6 @@ export class GameScene extends Phaser.Scene {
             }
         }, 250)
         
-
-        
         // 进度条
         function jindutiao_create_fun() {
             _this.add.image(200, 600, "jindutiaokuang").setScale(0.5)
@@ -106,7 +99,6 @@ export class GameScene extends Phaser.Scene {
                 _this.jindutiao.setScale(0.5 * jindutiao_scale_x, 0.5)
             }, 1000)
         }
-        
 
         // 分数
         function score_fun() {
@@ -228,10 +220,6 @@ export class GameScene extends Phaser.Scene {
 
             this.player.setVelocityX((this.stone_xy.x - this.player.x) * speed + x)
             this.player.setVelocityY((this.stone_xy.y - this.player.y) * speed)
-        }
-        if(this.mouseup == true) {
-            console.log("yo")
-
         }
     }
 

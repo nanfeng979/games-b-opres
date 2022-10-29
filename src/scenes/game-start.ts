@@ -9,12 +9,14 @@ export class GameStart extends Phaser.Scene {
           key: 'GameStart'
         });
       }
+
     preload(): void {
         let images_url = "../src/assets/images/" // 图像资源路径
         this.load.image("play", images_url + "play.png") // 开始键--第一场景
         this.load.image("gamename", images_url + "gamename.png") // gamename图标--第一场景
         this.load.image("tips", images_url + "tips.png") // tips提示--第二场景
     }
+    
     create(): void {
         let _this = this
         
@@ -37,7 +39,6 @@ export class GameStart extends Phaser.Scene {
             
         })
 
-        
         // 开始键和gamename图标的定时器
         setInterval(function() {
             _this.icon_scale = !_this.icon_scale
