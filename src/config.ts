@@ -1,3 +1,4 @@
+import { GameStart } from './scenes/game-start';
 import { GameScene } from './scenes/game-scene';
 
 export const GameConfig: Phaser.Types.Core.GameConfig = {
@@ -14,6 +15,6 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
         debug: false
     }
     }, // 开启物理引擎并配置
-  scene: [GameScene],
+  scene: [GameScene, GameStart],
   backgroundColor: '#000000',
 };

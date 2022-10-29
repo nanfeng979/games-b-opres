@@ -7,9 +7,8 @@ export class GameScene extends Phaser.Scene {
     private jindutiao:any
     private scoreObject!:Phaser.GameObjects.Text
     private score:number = 0
-    private play!:Phaser.GameObjects.Image // 开始键--第一场景
-    private gamename!:Phaser.GameObjects.Image // gamename图标--第一场景
-    private icon_scale:Boolean = false // 控制第一场景的动画
+    // private play!:Phaser.GameObjects.Image // 开始键--第一场景
+    // private gamename!:Phaser.GameObjects.Image // gamename图标--第一场景
     private scene_number:number = 0 // 控制场景
     private tips!:Phaser.GameObjects.Image // tips提示--第二场景
     private yes!:Phaser.GameObjects.Image // yes--第四场景
@@ -35,9 +34,7 @@ export class GameScene extends Phaser.Scene {
         this.load.image("rope", images_url + "rope.png") // 绳子
         this.load.image("jindutiao", images_url + "energybar.png") // 进度条
         this.load.image("jindutiaokuang", images_url + "energycontainer.png") // 进度条框
-        this.load.image("play", images_url + "play.png") // 开始键--第一场景
-        this.load.image("gamename", images_url + "gamename.png") // gamename图标--第一场景
-        this.load.image("tips", images_url + "tips.png") // tips提示--第二场景
+
         this.load.image("tryagain", images_url + "tryagain.png") // tryagain--第四场景
         this.load.image("yes", images_url + "yes.png") // yes--第四场景
         this.load.image("no", images_url + "no.png") // no--第四场景
@@ -63,14 +60,9 @@ export class GameScene extends Phaser.Scene {
         stones.children.each((child, i) => {
             stone[i] = child
         })
-        // stones.children.iterate(function (child, i) {
-        //   if(i == 2){
-        //     child.y += 100
-        //   }
-        // })
 
 		// 人物
-        this.player = this.physics.add.sprite(375 / 2, 500, "player").setScale(0.5).setAccelerationY(100)
+        this.player = this.physics.add.sprite(375 / 2, 500, "player").setScale(0.5).setAccelerationY(200)
         this.player.setBounce(0.3); // 弹力系数
         this.player.setCollideWorldBounds(true); // 与世界边框碰撞就停止
         this.physics.add.collider(this.player, lawns, pengzhuang);
@@ -121,16 +113,8 @@ export class GameScene extends Phaser.Scene {
             _this.scoreObject = _this.add.text(0, 0, "score: " + _this.score , { fontSize: "24px"})
         }
 
-        // 开始键
-        this.play = this.add.image(375 / 2, 667 / 2, "play").setScale(0.5)
-
-        // gamename图标
-        this.gamename = this.add.image(375 /2, 667 / 2 - 200, "gamename").setScale(0.5)
-
-        // 开始键和gamename图标的定时器
-        setInterval(function() {
-            _this.icon_scale = !_this.icon_scale
-        }, 150)
+        score_fun()
+        jindutiao_create_fun()
 
         function four_scene_create() {
             // tryagain
@@ -150,24 +134,17 @@ export class GameScene extends Phaser.Scene {
             _this.add.text(375 / 2 - 130, 667 / 2, "Your Score: " + _this.score , { fontSize: "36px"})
         }
         
+        this.scene.launch("GameStart")
+        this.scene.pause()
 
         // 事件
         this.input.on("pointerdown", (pointer:any) => {
             switch(this.scene_number) {
                 case 0:
-                     _this.play.destroy()
-                     _this.gamename.destroy()
-                    _this.tips = _this.add.image(375 /2, 667 / 2 - 200, "tips").setScale(0.5)
-                    jindutiao_create_fun()
-                    score_fun()
-                    _this.scene_number = 1
-                break;
-                case 1:
-                    _this.tips.destroy()
                     jindutiao_timer_fun()
-                    _this.scene_number = 2
-                break;
+                    this.scene_number = 2
                 case 2:
+                    // jindutiao_timer_fun()
                     this.mousedown = true
                     if(pointer.x < ((375 / 4) * 1 )) {
                         this.stone_xy = stone[0]
@@ -222,21 +199,6 @@ export class GameScene extends Phaser.Scene {
     }
     
     update(time: number, delta: number): void {
-        // rope.x = player.x;
-        // rope.y = player.y;
-
-        // 控制gamename图标和play开始键的抽动
-        if(this.scene_number == 0) {
-            if(this.icon_scale == false) {
-                let scale_x = 0.51
-                let scale_y = 0.51
-                this.play.setScale(0.5, scale_y)
-                this.gamename.setScale(scale_x, scale_y)
-            } else {
-                this.play.setScale(0.5, 0.5)
-                this.gamename.setScale(0.5, 0.5)
-            }
-        }
 
         if(this.mousedown == true) {
             console.log("yeah")
