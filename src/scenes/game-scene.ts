@@ -90,74 +90,7 @@ export class GameScene extends Phaser.Scene {
             }
         }, 250)
         
-        // this.rope = this.physics.add.staticGroup({
-        //     key: "rope",
-        //     // frame: ["blue1", "red1", "green1", "yellow1", "silver1", "purple1"],
-        //     // frame: ["blue1"],
-        //     frameQuantity: 10, // 控制对象的重复数量
-        //     gridAlign: {
-        //       width: 10, // 不要
-        //       height: 6, // 不要
-        //       cellWidth: 32, // 重复的对象的原点之间的宽度距离
-        //       cellHeight: 32, // 重复的对象的原点之间的高度距离
-        //       x: 112,//why? // 第一个对象的x轴
-        //       y: 100, // 第一个对象的y轴
-        //     },
-        //   });
-        //   this.physics.add.collider(
-        //     this.player,
-        //     this.rope,
-        //     player_peng_rope,
-        //     undefined,
-        //     this
-        //   );
-          
-        // this.rope.children.each((child) => {
-        //     child.destroy()
-        // })
 
-        //   this.rope = this.physics.add.staticGroup({
-        //     key: "rope",
-        //     // frame: ["blue1", "red1", "green1", "yellow1", "silver1", "purple1"],
-        //     // frame: ["blue1"],
-        //     frameQuantity: 10, // 控制对象的重复数量
-        //     gridAlign: {
-        //       width: 10, // 不要
-        //       height: 6, // 不要
-        //       cellWidth: 64, // 重复的对象的原点之间的宽度距离
-        //       cellHeight: 32, // 重复的对象的原点之间的高度距离
-        //       x: 112,//why? // 第一个对象的x轴
-        //       y: 100, // 第一个对象的y轴
-        //     },
-        //   });
-        
-
-        // rope = this.add.image(50, 50, "rope").setAngle(90)
-        // this.rope = this.add.group({
-        //     key: "rope",
-        //     repeat: 5,
-        //     setXY: {x: 150, y: 300, stepX: 30}
-        // })
-
-        // this.rope = this.physics.add.staticGroup({
-        //     key: "rope",
-        //     // frame: ["blue1", "red1", "green1", "yellow1", "silver1", "purple1"],
-        //     frameQuantity: 2,
-        //     gridAlign: {
-        //       width: 10,
-        //       height: 6,
-        //       cellWidth: 32,
-        //       cellHeight: 32,
-        //       x: 112,//why?
-        //       y: 100,
-        //     },
-        //   })
-
-        function player_peng_rope(ball:Phaser.Types.Physics.Arcade.GameObjectWithDynamicBody, 
-            rope:Phaser.Types.Physics.Arcade.GameObjectWithDynamicBody) {
-            // rope.disableBody(true, true);
-            rope.destroy()
-        }
         
         // 进度条
         function jindutiao_create_fun() {
@@ -170,7 +103,8 @@ export class GameScene extends Phaser.Scene {
             let jindutiao_scale_x = 1
             let jindutiao_timer = setInterval(function () {
                 jindutiao_scale_x -= (1 / 50)
-                if(jindutiao_scale_x <= 0) {
+                if(jindutiao_scale_x < 0) {
+                    _this.jindutiao.setScale(0, 0.5)
                     clearInterval(jindutiao_timer)
                     _this.scene_number = 4
                     four_scene_create()
@@ -249,6 +183,12 @@ export class GameScene extends Phaser.Scene {
 
         this.input.on("pointerup", (pointer:any) => {
             this.mousedown = false
+            console.log("yoo")
+            if(this.stone_xy) {
+                let random_y = Math.floor(Math.random() * 100 - 50)
+                if(this.stone_xy.y + random_y < 50 || this.stone_xy.y + random_y > 250) return
+                this.stone_xy.y += random_y
+            }
         })
 
 		// 自定义函数
@@ -301,6 +241,9 @@ export class GameScene extends Phaser.Scene {
             let rotat = Math.atan((this.stone_xy.x - this.player.x)/(this.stone_xy.y - this.player.y)) * 180 / Math.PI
             let rope_len = Math.sqrt((this.stone_xy.x - this.player.x) ** 2 + (this.stone_xy.y - this.player.y) ** 2)
             let rope_num = Math.floor(rope_len / 32) + 1
+            if(rope_len / 32 < 1) {
+                rope_num = 0 // 如果小于1，则绳子只有显示在主角表面而已，因此去掉
+            }
             let rope = this.physics.add.staticGroup({
                 key: 'rope',
                 frameQuantity: rope_num,
@@ -312,13 +255,13 @@ export class GameScene extends Phaser.Scene {
                     child.destroy()
                 })
             });
-
             
             this.player.setVelocityX((this.stone_xy.x - this.player.x) * speed)
             this.player.setVelocityY((this.stone_xy.y - this.player.y) * speed)
         }
         if(this.mouseup == true) {
             console.log("yo")
+
         }
     }
 
